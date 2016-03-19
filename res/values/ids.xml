@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="common_title_left" type="id" />
+    <item name="common_title_right" type="id" />
+    <item name="common_title_text" type="id" />
+</resources>

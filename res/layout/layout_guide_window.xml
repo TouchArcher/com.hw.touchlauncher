@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/backgroundbox"
+    android:paddingBottom="15.0dip" >
+
+    <TextView
+        android:id="@+id/txt_tips"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15.0dip"
+        android:gravity="center_horizontal"
+        android:text="滑到底部开启显示悬浮窗"
+        android:textColor="#ff252525"
+        android:textSize="18.0sp" />
+
+    <ImageView
+        android:id="@+id/img_guide"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_tips"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15.0dip"
+        android:adjustViewBounds="true"
+        android:paddingLeft="10.0dip"
+        android:paddingRight="10.0dip"
+        android:src="@drawable/guide_show_popup_window_miuiv6" />
+
+    <TextView
+        android:id="@+id/miui_warn_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/img_guide"
+        android:layout_marginLeft="10.0dip"
+        android:layout_marginRight="10.0dip"
+        android:layout_marginTop="12.0dip"
+        android:lineSpacingMultiplier="1.2"
+        android:paddingLeft="5.0dip"
+        android:text="开启悬浮窗是为了防止按Home键跳出，米粒桌面不会往您的桌面添加任何悬浮窗"
+        android:textColor="#99000000"
+        android:textSize="14.0sp" />
+
+    <Button
+        android:id="@+id/btn_guide_confirm"
+        android:layout_width="200.0dip"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/miui_warn_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20.0dip"
+        android:background="@drawable/confirm"
+        android:text="确定"
+        android:textColor="#ffffff"
+        android:textSize="18.0sp" />
+
+</RelativeLayout>

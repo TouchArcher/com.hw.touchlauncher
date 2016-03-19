@@ -8,8 +8,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 
-import com.hw.toucharcher.base.LifecycleActivity;
-import com.hw.toucharcher.base.LifecycleActivity.LifecycleCallback;
+import com.hw.toucharcher.activity.LifecycleActivity;
+import com.hw.toucharcher.activity.LifecycleActivity.LifecycleCallback;
 
 public class LeftcycleHelper {
 	/**

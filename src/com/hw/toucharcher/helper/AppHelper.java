@@ -9,15 +9,18 @@ import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Application;
 import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -26,6 +29,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+
+import com.hw.toucharcher.activity.ClearActivity;
 
 public class AppHelper {
 	public static boolean isMainProcess() {
@@ -303,5 +308,113 @@ public class AppHelper {
 		int left = location[0];
 		int top = location[1];
 		return x < left || x > (left + view.getWidth()) || y < top || y > (top + view.getHeight());
+	}
+
+	public static void setTranslucentStatus(Activity a, boolean on) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+			return;
+		}
+
+		Window win = a.getWindow();
+		WindowManager.LayoutParams winParams = win.getAttributes();
+		final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+		if (on) {
+			winParams.flags |= bits;
+		} else {
+			winParams.flags &= ~bits;
+		}
+		win.setAttributes(winParams);
+	}
+
+	public static void setTranslucentNavigation(Activity a, boolean on) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+			return;
+		}
+
+		Window win = a.getWindow();
+		WindowManager.LayoutParams winParams = win.getAttributes();
+		final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+		if (on) {
+			winParams.flags |= bits;
+		} else {
+			winParams.flags &= ~bits;
+		}
+		win.setAttributes(winParams);
+	}
+
+	public static void openAppPermissionsSetting() {
+		try {
+			Intent intent = new Intent("miui.intent.action.APP_PERM_EDITOR");
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			ComponentName component = new ComponentName("com.miui.securitycenter", "com.miui.permcenter.permissions.AppPermissionsEditorActivity");
+			intent.setComponent(component);
+			intent.putExtra("extra_pkgname", AppConfigure.PackageName);
+
+			AppConfigure.cApplication.startActivity(intent);
+		} catch (Exception e) {
+		}
+	}
+
+	public static void openDevelopmentSettings() {
+		try {
+			Intent intent = new Intent("android.settings.APPLICATION_DEVELOPMENT_SETTINGS");
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			ComponentName component = new ComponentName("com.android.settings", "com.android.settings.Settings$DevelopmentSettingsActivity");
+			intent.setComponent(component);
+
+			AppConfigure.cApplication.startActivity(intent);
+		} catch (Exception e) {
+		}
+	}
+
+	/**
+	 * 获取手机号
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public static String getPhoneNum() {
+		if (AppConfigure.cPhoneNum == null) {
+			TelephonyManager telephonyManager = (TelephonyManager) AppConfigure.cApplication.getSystemService(Context.TELEPHONY_SERVICE);
+			AppConfigure.cPhoneNum = telephonyManager.getLine1Number();
+		}
+
+		return AppConfigure.cPhoneNum;
+	}
+
+	public static void disableKeyguard() {
+		KeyguardManager keyguardManager = (KeyguardManager) AppConfigure.cApplication.getSystemService(Context.KEYGUARD_SERVICE);
+		KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("");
+		keyguardLock.disableKeyguard();
+	}
+
+	public static void openDesktopSettings() {
+		try {
+			Intent intent = new Intent("android.intent.action.MAIN");
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.addCategory("android.intent.category.HOME");
+			ComponentName component = new ComponentName("android", "com.android.internal.app.ResolverActivity");
+			intent.setComponent(component);
+
+			AppConfigure.cApplication.startActivity(intent);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void clearDefaultDesktop(Activity a) {
+		try {
+			ComponentName componentName = new ComponentName(a, ClearActivity.class);
+			PackageManager manager = a.getPackageManager();
+
+			manager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+			Intent intent = new Intent();
+			intent.setAction(Intent.ACTION_MAIN);
+			intent.addCategory(Intent.CATEGORY_HOME);
+			manager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+			manager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
