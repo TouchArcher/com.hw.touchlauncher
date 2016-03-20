@@ -10,6 +10,7 @@ import com.hw.toucharcher.helper.AppConfigure;
 import com.hw.toucharcher.helper.AppHelper;
 import com.hw.toucharcher.operator.ArcherOperator;
 import com.hw.toucharcher.operator.ArcherOperator.IOperator;
+import com.hw.toucharcher.touch.TouchService;
 
 public class ArcherActivity extends LifecycleActivity implements IOperator {
 	private ArcherOperator mOperator;
@@ -56,17 +57,22 @@ public class ArcherActivity extends LifecycleActivity implements IOperator {
 			}, GuideWindowActivity.DelayMillis);
 			break;
 		case R.id.id_open_apppermissions:
-			AppHelper.openAppPermissionsSetting();
+			if (AppHelper.hasSettingFloatPermissions()) {
+				AppHelper.openAppPermissionsSetting();
 
-			v.postDelayed(new Runnable() {
+				v.postDelayed(new Runnable() {
 
-				@Override
-				public void run() {
-					Intent dialog = new Intent(AppConfigure.cApplication, GuideWindowActivity.class);
-					dialog.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					startActivity(dialog);
-				}
-			}, GuideWindowActivity.DelayMillis);
+					@Override
+					public void run() {
+						Intent dialog = new Intent(AppConfigure.cApplication, GuideWindowActivity.class);
+						dialog.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(dialog);
+					}
+				}, GuideWindowActivity.DelayMillis);
+			} else {
+				Intent service = new Intent(AppConfigure.cApplication, TouchService.class);
+				startService(service);
+			}
 			break;
 		}
 

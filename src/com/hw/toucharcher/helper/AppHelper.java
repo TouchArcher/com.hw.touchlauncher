@@ -1,12 +1,14 @@
 package com.hw.toucharcher.helper;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManager.RunningTaskInfo;
+import android.app.AppOpsManager;
 import android.app.Application;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
@@ -20,7 +22,11 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -31,6 +37,8 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 
 import com.hw.toucharcher.activity.ClearActivity;
+import com.hw.toucharcher.activity.LifecycleActivity;
+import com.hw.toucharcher.activity.LifecycleActivity.LifecycleCallback;
 
 public class AppHelper {
 	public static boolean isMainProcess() {
@@ -416,5 +424,24 @@ public class AppHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static boolean hasSettingFloatPermissions() {
+		if (Build.VERSION.SDK_INT >= 19) {
+			try {
+				AppOpsManager manager = (AppOpsManager) AppConfigure.cApplication.getSystemService(Context.APP_OPS_SERVICE);
+				Method m = AppOpsManager.class.getMethod("checkOp", int.class, int.class, String.class);
+				int mode = (Integer) m.invoke(manager, 24, Binder.getCallingUid(), AppConfigure.PackageName);
+				return AppOpsManager.MODE_ALLOWED != mode;
+			} catch (Exception e) {
+			}
+		}
+		return false;
+	}
+	
+	public static Handler createBackgroundHandler(Object o) {
+		HandlerThread thread = new HandlerThread("Thread-hid" + o.hashCode());
+		thread.start();
+		return new Handler(thread.getLooper());
 	}
 }

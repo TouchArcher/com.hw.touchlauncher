@@ -59,6 +59,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        
+        <service android:name="com.hw.toucharcher.touch.TouchService"></service>
 
         <meta-data
             android:name="UMENG_APPKEY"
